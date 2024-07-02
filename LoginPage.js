@@ -1,77 +1,91 @@
-// src/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from './auth'; 
-import './LoginPage.css'; 
+import { auth } from './firebaseConfig';
+import { signInWithEmailAndPassword , sendPasswordResetEmail } from 'firebase/auth';
+import Modal from './Modal';
 
-function LoginPage() {
-  const navigate = useNavigate();
+
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setError('');
-
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      await login(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       navigate('/homepage');
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error signing in: ", error);
+      alert("Login failed. Please check your credentials and try again.");
     }
   };
 
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      alert('Password reset email sent. Please check your inbox.');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      alert('Failed to send password reset email. Please try again.');
+    }
+  };
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
-    <div>
-    <div className='logoImage'>
-      <a href='/'><h1>PixVibe</h1></a>
-    </div>
-  
-    <div className="welcome-container">
-      
-      <div className="left-section">
-        <h1>PixVibe Website</h1>
-        <p>"Capture the moments, share the stories. Your world in every frame."</p>
-      </div>
-      <div className="right-section">
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label htmlFor="email"><i className="fas fa-envelope"></i> Email</label>
+    <div className="login-page">
+      <h1>Login</h1>
+      <form onSubmit={handleLogin}>
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <button className="btn-link" onClick={openModal}>Forgot Password?</button>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <h2>Reset Password</h2>
+        <form onSubmit={handlePasswordReset}>
+          <div className="input-group">
+            <label htmlFor="resetEmail">Email</label>
             <input
               type="email"
-              id="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="resetEmail"
+              name="resetEmail"
+              placeholder="Enter your email"
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
               required
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="password"><i className="fas fa-lock"></i> Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p className="error">{error}</p>}
-          <button type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+          <button className="btn" type="submit">Send Reset Email</button>
         </form>
-      </div>
+      </Modal>
     </div>
-
-  </div>
   );
-}
+};
 
 export default LoginPage;
