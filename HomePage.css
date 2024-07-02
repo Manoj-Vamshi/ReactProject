@@ -1,0 +1,104 @@
+/* HomePage.css */
+.home-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c6ea0;
+    color: white;
+    padding: 10px 20px;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .nav a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .search-bar input {
+    padding: 5px;
+  }
+  
+  .logout-button {
+    background-color: #f56;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .welcome-message {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .image-gallery {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .image-placeholder {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+  }
+  
+  .chat-sidebar {
+    position: absolute;
+    right: 20px;
+    top: 100px;
+    width: 200px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .chat-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .chat-users {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .chat-users li {
+    margin-bottom: 5px;
+  }
+  
+  .footer {
+    background-color: #2c6ea0;
+    color: white;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .footer-nav a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+  }
+  
