@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import './WelcomePage.css';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from './firebaseConfig';
 
 const WelcomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,7 +16,7 @@ const WelcomePage = () => {
     gender: ''
   });
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,18 +26,25 @@ const WelcomePage = () => {
     });
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    setIsModalOpen(false);
-    navigate('/homepage');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      // Optionally save additional user data to Firestore
+      console.log('User signed up:', userCredential.user);
+      setIsModalOpen(false);
+      navigate('/homepage');
+    } catch (error) {
+      console.error('Error signing up:', error);
+      alert('Signup failed. Please try again.');
+    }
   };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const handleLoginClick = () => {
-    navigate('/login'); 
+    navigate('/login');
   };
 
   return (
@@ -47,7 +56,7 @@ const WelcomePage = () => {
       </div>
       <div className="right-section">
         <button className="btn" onClick={openModal}>Sign Up</button>
-        <button className="btn" onClick={handleLoginClick}>Login</button> 
+        <button className="btn" onClick={handleLoginClick}>Login</button>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
