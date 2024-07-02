@@ -72,3 +72,119 @@ footer p {
 .footer-links a:hover {
   text-decoration: underline;
 }
+
+.privacy-policy {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.privacy-policy h1, .privacy-policy h2 {
+  color: #333;
+}
+
+.privacy-policy p, .privacy-policy ul {
+  color: #555;
+}
+
+.privacy-policy ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+.terms-and-conditions {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.terms-and-conditions h1, .terms-and-conditions h2 {
+  color: #333;
+}
+
+.terms-and-conditions p, .terms-and-conditions ul {
+  color: #555;
+}
+
+.terms-and-conditions ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+.contact-us {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.contact-us h1, .contact-us h2 {
+  color: #333;
+}
+
+.contact-us p {
+  color: #555;
+}
+
+.contact-us .form-group {
+  margin-bottom: 15px;
+}
+
+.contact-us label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.contact-us input, .contact-us textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contact-us button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.contact-us button:hover {
+  background-color: #0056b3;
+}
+
+.contact-info {
+  margin-top: 30px;
+}
+
+.contact-info h2 {
+  color: #333;
+}
+
+.contact-info p {
+  color: #555;
+}
+
+.copyright {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.copyright h1, .copyright h2 {
+  color: #333;
+}
+
+.copyright p, .copyright ul {
+  color: #555;
+}
+
+.copyright ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+
