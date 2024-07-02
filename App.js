@@ -37,7 +37,7 @@ function App() {
         </Routes>
         <footer>
           <div className="footer-links">
-            <a href="pixvibe" >PixVibe@ 2024</a>
+            <a href="pixvibe" >PixVibe @ 2024</a>
             <a href="contactus" >Contact Us</a>
             <a href="privacypolicy">Privacy Policy</a>
             <a href="termsandconditions">Terms & Conditions</a>
