@@ -51,7 +51,7 @@ const WelcomePage = () => {
     <div className="welcome-container">
       <div className="left-section">
         <h1>PixVibe </h1>
-        <h1> Website</h1>
+        
         <p>"Capture the moments, share the stories. Your world in every frame."</p>
       </div>
       <div className="right-section">
@@ -60,7 +60,7 @@ const WelcomePage = () => {
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Sign Up</h2>
+        <h2>Sign-Up</h2>
         <form onSubmit={handleSignUp}>
           <div className="input-group">
             <label htmlFor="firstName">Name</label>
