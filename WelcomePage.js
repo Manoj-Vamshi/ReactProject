@@ -63,7 +63,7 @@ const WelcomePage = () => {
         <h2>Sign-Up</h2>
         <form onSubmit={handleSignUp}>
           <div className="input-group">
-            <label htmlFor="firstName">Name</label>
+            <label htmlFor="firstName">First Name</label>
             <input
               type="text"
               id="firstName"
@@ -73,6 +73,8 @@ const WelcomePage = () => {
               onChange={handleInputChange}
               required
             />
+            
+            <label htmlFor="lastName">Last Name</label>
             <input
               type="text"
               id="lastName"
@@ -147,7 +149,7 @@ const WelcomePage = () => {
                 checked={formData.gender === 'Custom'}
                 onChange={handleInputChange}
               />
-              <label htmlFor="custom">Custom</label>
+              <label htmlFor="custom">Other</label>
             </div>
           </div>
           <p className='consent'>By clicking Sign Up, you agree to our Terms, Privacy Policy, and Cookies Policy. You may receive SMS notifications from us and can opt out at any time.</p>
