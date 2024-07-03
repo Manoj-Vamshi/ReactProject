@@ -68,6 +68,23 @@ html,
   background-color: #8fa7bc;
 }
 
+.input-group{
+  
+  display: inline-flexbox;
+  flex-direction: column;
+  text-align: left;
+  width: 100%;
+  padding-top: 10px;
+  margin: auto;
+
+
+
+}
+input{
+  padding: 5px;
+
+}
+
 footer {
   background-color: #217bca;
   color: white;
