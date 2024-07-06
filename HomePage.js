@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './HomePage.css';
 import { useNavigate } from 'react-router-dom';
-import UpdateModal from './UpdateModal';
+import { updateUserProfile, updateUserEmailAndPassword } from './updateUserProfile';
+import { auth, db } from './firebaseConfig';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const Header = ({ handleFormSubmit, onLogout, onUpdateModal }) => {
   const navigate = useNavigate();
@@ -16,7 +18,6 @@ const Header = ({ handleFormSubmit, onLogout, onUpdateModal }) => {
           <a href="#">Feed</a>
           <a href="#" onClick={handleFriendsClick}>Friends</a>
           <a href="#" onClick={onUpdateModal}>Help</a>
-
         </nav>
         <div className="search-bar">
           <input type="text" placeholder="Search" />
@@ -27,16 +28,19 @@ const Header = ({ handleFormSubmit, onLogout, onUpdateModal }) => {
   );
 };
 
-const MainContent = () => {
+const MainContent = ({ userName, images, handleImageUpload, handleImageDelete }) => {
   return (
     <main className="main-content">
-      <div className="welcome-message">Welcome User!</div>
+      <div className="welcome-message">Welcome {userName}!</div>
       <div className="image-gallery">
-        <div className="image-placeholder">Image</div>
-        <div className="image-placeholder">Image</div>
-        <div className="image-placeholder">Image</div>
-        <div className="image-placeholder">Image</div>
+        {images.map((image, index) => (
+          <div key={index} className="image-item">
+            <img src={image.url} alt={`Image ${index + 1}`} />
+            <button onClick={() => handleImageDelete(index)}>Delete</button>
+          </div>
+        ))}
       </div>
+      <input type="file" accept="image/*" onChange={handleImageUpload} />
     </main>
   );
 };
@@ -60,15 +64,85 @@ const HomePage = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    currentPassword: '',
     email: '',
-    password: '',
+    newPassword: '',
     birthday: '',
     gender: ''
   });
 
+  const [userName, setUserName] = useState('');
+  const [images, setImages] = useState([]); 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        try {
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            console.log('User Data:', userData);
+            setUserName(`${userData.firstName} ${userData.lastName}`);
+            setImages(userData.images || []); 
+          } else {
+            console.error('User document not found');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      } else {
+        console.error('No user signed in');
+      }
+    };
 
+    fetchUserData();
+  }, []);
+
+ 
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0]; 
+    const reader = new FileReader();
+
+    reader.onload = async function (e) {
+      const newImage = {
+        id: images.length + 1, 
+        url: e.target.result, 
+      };
+
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const userDocRef = doc(db, 'users', user.uid);
+          await updateDoc(userDocRef, {
+            images: [...images, newImage], 
+          });
+          setImages([...images, newImage]); 
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    };
+
+    reader.readAsDataURL(file); 
+  };
+
+  
+  const handleImageDelete = async (index) => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const updatedImages = images.filter((image, i) => i !== index); 
+        const userDocRef = doc(db, 'users', user.uid);
+        await updateDoc(userDocRef, { images: updatedImages }); 
+        setImages(updatedImages); 
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -78,128 +152,35 @@ const HomePage = () => {
     });
   };
 
-  const handleHelp = (e) => {
+  const handleHelp = async (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    setIsUpdateModalOpen(true);
+    const { email, newPassword, currentPassword, ...profileData } = formData;
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        await updateUserEmailAndPassword(currentPassword, email, newPassword);
+        await updateUserProfile(user.uid, profileData);
+        console.log('User profile updated successfully');
+        setIsUpdateModalOpen(false);
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
+    }
   };
 
-
-
-  const closeUpdateModal = () => setIsUpdateModalOpen(false);
 
   const handleLogoutClick = (e) => {
     e.preventDefault();
-    navigate('/');
-  };
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    handleHelp(event);
-    handleLogoutClick();
+    auth.signOut().then(() => {
+      navigate('/');
+    });
   };
 
   return (
     <div className="home-page">
-      <Header handleFormSubmit={handleFormSubmit} onLogout={handleLogoutClick} onUpdateModal={handleHelp} />
-      <MainContent />
+      <Header handleFormSubmit={handleHelp} onLogout={handleLogoutClick} onUpdateModal={() => setIsUpdateModalOpen(true)} />
+      <MainContent userName={userName} images={images} handleImageUpload={handleImageUpload} handleImageDelete={handleImageDelete} />
       <ChatSidebar />
-
-      <UpdateModal isUpdateModalOpen={isUpdateModalOpen} onUpdateModalClose={closeUpdateModal}>
-        <h2>Update Profie</h2>
-        <form onSubmit={handleHelp}>
-          <div className="input-group">
-            <label htmlFor="firstName">Name</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              placeholder="Enter your First Name"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              placeholder="Enter your Last Name"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your Email ID"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="birthday">Birthday</label>
-            <input
-              type="date"
-              id="birthday"
-              name="birthday"
-              value={formData.birthday}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label>Gender</label>
-            <div>
-              <input
-                type="radio"
-                id="male"
-                name="gender"
-                value="Male"
-                checked={formData.gender === 'Male'}
-                onChange={handleInputChange}
-              />
-              <label htmlFor="male">Male</label>
-              <input
-                type="radio"
-                id="female"
-                name="gender"
-                value="Female"
-                checked={formData.gender === 'Female'}
-                onChange={handleInputChange}
-              />
-              <label htmlFor="female">Female</label>
-              <input
-                type="radio"
-                id="custom"
-                name="gender"
-                value="Custom"
-                checked={formData.gender === 'Custom'}
-                onChange={handleInputChange}
-              />
-              <label htmlFor="custom">Custom</label>
-            </div>
-          </div>
-          <p className='consent'>By clicking Sign Up, you agree to our Terms, Privacy Policy, and Cookies Policy. You may receive SMS notifications from us and can opt out at any time.</p>
-          <button className="btn" type="submit">Help</button>
-        </form>
-      </UpdateModal>
     </div>
   );
 };
