@@ -1,11 +1,13 @@
 import React from 'react';
+import './FinalProject.css';
+import BeforeLoginHeader from './BeforeLoginHeader';
+import BeforeLoginFooter from './BeforeLoginFooter';
 
 const PrivacyPolicy = () => {
   return (
-    <div className="privacy-policy">
-        <div className='logoImage'>
-      <a href='/'><h1>PixVibe</h1></a>
-    </div>
+    <div className="privacypage">
+     <BeforeLoginHeader/>
+     <div className="privacy-policy">
       <h1>Privacy Policy</h1>
       <p>Last updated: July 2, 2024</p>
       <p>Welcome to PixVibe!</p>
@@ -48,6 +50,8 @@ const PrivacyPolicy = () => {
       <p>If you have questions or comments about this notice, you may contact us at:</p>
       <p>Email: support@pixvibe.com</p>
       <p>Address: PixVibe, 123 Example St, City, Country</p>
+      </div>
+      <BeforeLoginFooter></BeforeLoginFooter>
     </div>
   );
 };
