@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import './FinalProject.css';
+import BeforeLoginHeader from './BeforeLoginHeader';
+import BeforeLoginFooter from './BeforeLoginFooter';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -17,15 +20,19 @@ const ContactUs = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form data submitted:', formData);
+    alert("Your Mail is submitted");
+    setFormData({
+      name: '',
+      email: '',
+      message: ''
+    });
   };
 
   return (
+    <div>
+       <BeforeLoginHeader />
     <div className="contact-us">
-        <div className='logoImage'>
-      <a href='/'><h1>PixVibe</h1></a>
-    </div>
+     
       <h1>Contact Us</h1>
       <p>If you have any questions or inquiries, please fill out the form below, and we will get back to you as soon as possible.</p>
       
@@ -71,6 +78,9 @@ const ContactUs = () => {
         <p>Address: PixVibe, 123 Example St, City, Country</p>
         <p>Phone: (123) 456-7890</p>
       </div>
+      
+    </div>
+    <BeforeLoginFooter />
     </div>
   );
 };
