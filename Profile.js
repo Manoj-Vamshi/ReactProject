@@ -1,6 +1,6 @@
-import React, { Profiler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import './FinalProject.css';
 import AfterLoginHeader from './AfterLoginHeader';
@@ -19,7 +19,7 @@ const Profile = () => {
         const userSnapshot = await getDoc(userDoc);
         if (userSnapshot.exists()) {
           setUser(userSnapshot.data());
-   
+
           if (Array.isArray(userSnapshot.data().images)) {
             setCommentInputs(userSnapshot.data().images.map(() => ''));
           } else {
@@ -51,7 +51,7 @@ const Profile = () => {
       if (!updatedImages[index].comments) {
         updatedImages[index].comments = [];
       }
-      updatedImages[index].comments.push(`${friendId.firstName}: ${commentInputs[index]}`);
+      updatedImages[index].comments.push(commentInputs[index]);
 
       await updateDoc(userDocRef, {
         images: updatedImages
@@ -71,6 +71,26 @@ const Profile = () => {
     }
   };
 
+  const handleDeleteComment = async (imageIndex, commentIndex) => {
+    try {
+      const userDocRef = doc(db, 'users', friendId);
+      const updatedImages = [...user.images];
+      updatedImages[imageIndex].comments.splice(commentIndex, 1);
+
+      await updateDoc(userDocRef, {
+        images: updatedImages
+      });
+
+      setUser((prevState) => {
+        const updatedUser = { ...prevState };
+        updatedUser.images = updatedImages;
+        return updatedUser;
+      });
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -79,7 +99,7 @@ const Profile = () => {
     return (
       <div>
         <AfterLoginHeader />
-        <div className='notFound'><h2>User data not found or images data is not an array.</h2></div>
+        <div className="notFound"><h2>User data not found or images data is not an array.</h2></div>
         <AfterLoginFooter />
       </div>
     );
@@ -87,39 +107,38 @@ const Profile = () => {
 
   return (
     <div>
-      
-    <AfterLoginHeader />
-    <div className="profile-container">
-    
-     
-      <h1>{user.firstName} {user.lastName}</h1>
-      <h4>Contact: {user.email}</h4>
-      <div className="image-gallery">
-        {user.images.map((image, index) => (
-          <div key={index} className="image-item">
-            <img src={image.url} alt={`Image ${index + 1}`} />
-            <div className="comments-section">
-              <div className="comment-input">
-                <input
-                  type="text"
-                  placeholder="Add a comment"
-                  value={commentInputs[index]}
-                  onChange={(e) => handleCommentChange(index, e)}
-                />
-                <button onClick={() => handleSubmitComment(index)}>Submit</button>
-              </div>
-              <div className="comments-list">
-                {image.comments && image.comments.map((comment, commentIndex) => (
-                  <div key={commentIndex} className="comment-item">{comment}</div>
-                ))}
+      <AfterLoginHeader />
+      <div className="profile-container">
+        <h1>{user.firstName} {user.lastName}</h1>
+        <h4>Contact: {user.email}</h4>
+        <div className="image-gallery">
+          {user.images.map((image, index) => (
+            <div key={index} className="image-item">
+              <img src={image.url} alt={`Image ${index + 1}`} />
+              <div className="comments-section">
+                <div className="comment-input">
+                  <input
+                    type="text"
+                    placeholder="Add a comment"
+                    value={commentInputs[index]}
+                    onChange={(e) => handleCommentChange(index, e)}
+                  />
+                  <button onClick={() => handleSubmitComment(index)}>Submit</button>
+                </div>
+                <div className="comments-list">
+                  {image.comments && image.comments.map((comment, commentIndex) => (
+                    <div key={commentIndex} className="comment-item">
+                      {comment}
+                      <a id='deletebutton' onClick={() => handleDeleteComment(index, commentIndex)}>Delete</a>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      
-    </div>
-    <AfterLoginFooter />
+      <AfterLoginFooter />
     </div>
   );
 };
