@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './FinalProject.css';
 import { useNavigate } from 'react-router-dom';
-import { updateUserProfile, updateUserEmailAndPassword } from './updateUserProfile';
 import { auth, db } from './firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import AfterLoginHeader from './AfterLoginHeader';
@@ -12,20 +11,27 @@ const Header = ({ handleFormSubmit, onLogout, onUpdateModal }) => {
   const handleFriendsClick = () => {
     navigate('/friends');
   };
+
+  const handleWelcomePage = () => {
+    navigate('/');
+  };
+
   return (
-    <header className="header">
-      {/* <form onSubmit={handleFormSubmit}>
-        <div className="logo">PixVibe</div>
-        <div className="search-bar">
-          <input type="text" placeholder="Search" />
+    <header className="feedheader">
+      <form onSubmit={handleFormSubmit}>
+        <div>
+          <a id="logo" onClick={handleWelcomePage}>PixVibe</a>
+          <a>Feed</a>
+          <a onClick={handleFriendsClick}>Friends</a>
+          <input id="feedsearch" type="text" placeholder="Search" />
+          <a type="button" className="loginbtna" onClick={onLogout}>Log Out</a>
         </div>
-        <button type="button" className="logout-button" onClick={onLogout}>Log Out</button>
-      </form> */}
+      </form>
     </header>
   );
 };
 
-const MainContent = ({ userName, images, handleImageUpload, handleImageDelete, handleCommentChange, handleSubmitComment, commentInputs }) => {
+const MainContent = ({ userName, images, handleImageUpload, handleImageDelete, handleCommentChange, handleSubmitComment, handleDeleteComment, commentInputs }) => {
   return (
     <main className="main-content">
       <div className="welcome-message">Welcome {userName}!</div>
@@ -33,7 +39,7 @@ const MainContent = ({ userName, images, handleImageUpload, handleImageDelete, h
         {images.map((image, index) => (
           <div key={index} className="image-item">
             <img src={image.url} alt={`Image ${index + 1}`} />
-            <button onClick={() => handleImageDelete(index)}>Delete</button>
+            <a id='deletebutton' onClick={() => handleImageDelete(index)}>Delete</a>
             <div className="comments-section">
               <div className="comment-input">
                 <input
@@ -45,8 +51,11 @@ const MainContent = ({ userName, images, handleImageUpload, handleImageDelete, h
                 <button onClick={() => handleSubmitComment(index)}>Submit</button>
               </div>
               <div className="comments-list">
-                {image.comments && image.comments.map((comment, commentIndex) => (
-                  <div key={commentIndex} className="comment-item">{comment}</div>
+              {image.comments && image.comments.map((comment, commentIndex) => (
+                    <div key={commentIndex} className="comment-item">
+                      {comment}
+                      <a id='deletebutton' onClick={() => handleDeleteComment(index, commentIndex)}>Delete</a>
+                    </div>
                 ))}
               </div>
             </div>
@@ -158,7 +167,7 @@ const HomePage = () => {
         if (!updatedImages[index].comments) {
           updatedImages[index].comments = [];
         }
-        updatedImages[index].comments.push(`${userName}: ${commentInputs[index]}`);
+        updatedImages[index].comments.push(commentInputs[index]);
 
         await updateDoc(userDocRef, {
           images: updatedImages
@@ -172,6 +181,25 @@ const HomePage = () => {
       }
     } catch (error) {
       console.error('Error updating comment:', error);
+    }
+  };
+
+  const handleDeleteComment = async (imageIndex, commentIndex) => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const updatedImages = [...images];
+        updatedImages[imageIndex].comments.splice(commentIndex, 1);
+
+        await updateDoc(userDocRef, {
+          images: updatedImages
+        });
+
+        setImages(updatedImages);
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
     }
   };
 
@@ -189,8 +217,7 @@ const HomePage = () => {
     const user = auth.currentUser;
     if (user) {
       try {
-        await updateUserEmailAndPassword(currentPassword, email, newPassword);
-        await updateUserProfile(user.uid, profileData);
+       
         console.log('User profile updated successfully');
         setIsUpdateModalOpen(false);
       } catch (error) {
@@ -207,18 +234,20 @@ const HomePage = () => {
   };
 
   return (
-    <div className="home-page">
+    <div>
       <Header handleFormSubmit={handleHelp} onLogout={handleLogoutClick} onUpdateModal={() => setIsUpdateModalOpen(true)} />
-      <AfterLoginHeader />
-      <MainContent 
-        userName={userName} 
-        images={images} 
-        handleImageUpload={handleImageUpload} 
-        handleImageDelete={handleImageDelete} 
-        handleCommentChange={handleCommentChange} 
-        handleSubmitComment={handleSubmitComment} 
-        commentInputs={commentInputs}
-      />
+      <div className="friends-container">
+        <MainContent
+          userName={userName}
+          images={images}
+          handleImageUpload={handleImageUpload}
+          handleImageDelete={handleImageDelete}
+          handleCommentChange={handleCommentChange}
+          handleSubmitComment={handleSubmitComment}
+          handleDeleteComment={handleDeleteComment}
+          commentInputs={commentInputs}
+        />
+      </div>
       <AfterLoginFooter />
     </div>
   );
