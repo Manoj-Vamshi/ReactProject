@@ -1,11 +1,14 @@
 import React from 'react';
+import './FinalProject.css';
+import BeforeLoginHeader from './BeforeLoginHeader';
+import BeforeLoginFooter from './BeforeLoginFooter';
 
 const TermsConditions = () => {
   return (
-    <div className="terms-and-conditions">
-        <div className='logoImage'>
-      <a href='/'><h1>PixVibe</h1></a>
-    </div>
+    <div>
+      <BeforeLoginHeader/>
+    <div className="contact-us">
+   
       <h1>Terms and Conditions</h1>
       <p>Last updated: July 2, 2024</p>
       <p>Welcome to PixVibe! These terms and conditions outline the rules and regulations for the use of PixVibe's Website and Mobile Application.</p>
@@ -57,6 +60,9 @@ const TermsConditions = () => {
 
       <h2>12. Governing Law & Jurisdiction</h2>
       <p>These Terms will be governed by and interpreted in accordance with the laws of the State of [Your State], and you submit to the non-exclusive jurisdiction of the state and federal courts located in [Your State] for the resolution of any disputes.</p>
+   
+    </div>
+     <BeforeLoginFooter/>
     </div>
   );
 };
