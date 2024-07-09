@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from './firebaseConfig';
-import { signInWithEmailAndPassword , sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import Modal from './Modal';
+import './FinalProject.css';
+import BeforeLoginHeader from './BeforeLoginHeader';
+import BeforeLoginFooter from './BeforeLoginFooter';
 
 
 const LoginPage = () => {
@@ -39,51 +42,57 @@ const LoginPage = () => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="login-page">
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <button className="btn-link" onClick={openModal}>Forgot Password?</button>
+    <div >
+      <BeforeLoginHeader />
+      <div className="login-page">
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Reset Password</h2>
-        <form onSubmit={handlePasswordReset}>
-          <div className="input-group">
-            <label htmlFor="resetEmail">Email</label>
+        <h1>Login</h1>
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
             <input
               type="email"
-              id="resetEmail"
-              name="resetEmail"
-              placeholder="Enter your email"
-              value={resetEmail}
-              onChange={(e) => setResetEmail(e.target.value)}
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          <button className="btn" type="submit">Send Reset Email</button>
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button className="loginbtn" type="submit">Login</button>
         </form>
-      </Modal>
+        <a className="loginbtna" onClick={openModal}>Forgot Password?</a>
+
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <h2>Reset Password</h2>
+          <form onSubmit={handlePasswordReset}>
+            <div className="input-group">
+              <label htmlFor="resetEmail">Email</label>
+              <input
+                type="email"
+                id="resetEmail"
+                name="resetEmail"
+                placeholder="Enter your email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                required
+              />
+            </div>
+            <button className="resetbtn" type="submit">Send Reset Email</button>
+          </form>
+        </Modal>
+      
+      </div>
+      <BeforeLoginFooter />
     </div>
   );
 };
