@@ -1,11 +1,14 @@
 import React from 'react';
+import './FinalProject.css';
+import BeforeLoginHeader from './BeforeLoginHeader';
+import BeforeLoginFooter from './BeforeLoginFooter';
 
 const PixVibe = () => {
   return (
-    <div className="copyright">
-        <div className='logoImage'>
-      <a href='/'><h1>PixVibe</h1></a>
-    </div>
+    <div>
+        <BeforeLoginHeader />
+    <div className="contact-us">
+     
       <h1>Copyright Notice</h1>
       <p>Last updated: July 2, 2024</p>
       
@@ -45,6 +48,9 @@ const PixVibe = () => {
       <p>If you have any questions or comments about this notice, please contact us at:</p>
       <p>Email: support@pixvibe.com</p>
       <p>Address: PixVibe, 123 Example St, City, Country</p>
+      
+      </div>
+      <BeforeLoginFooter />
     </div>
   );
 };
