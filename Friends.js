@@ -145,7 +145,7 @@ const Friends = () => {
       const friendRequestRef = doc(collection(db, 'friendRequests'));
       await setDoc(friendRequestRef, {
         from: auth.currentUser.uid,
-        to: userId,
+        to: userId, 
         status: 'pending'
       });
       alert('Friend request sent');
@@ -202,16 +202,18 @@ const Friends = () => {
 
   return (
     
-    <div className="friends-container">
+    <div >
       <AfterLoginHeader />
+      <div className="friends-container">
       <h2>Friends</h2>
       <input
+      id ="friendssearch"
         type="text"
         placeholder="Search for users"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <button onClick={handleSearch}>Search</button>
+      <a className='loginbtna' onClick={handleSearch}>Search</a>
       <div className="search-results">
       {searchResults.length > 0 ? (
         searchResults.map(user => (
@@ -228,21 +230,21 @@ const Friends = () => {
         <p>{noResultsMessage}</p>
       )}
     </div>
-      <h2>Friend Requests</h2>
+      <h4>Friend Requests</h4>
       <div className="friend-requests">
         {friendRequests.map(request => (
           <div key={request.id} className="request-item">
             <span>From: {requestUserDetails[request.from]?.firstName || request.from}</span>
-            <button onClick={() => handleAcceptRequest(request.id, request.from)}>Accept</button>
-            <button onClick={() => handleRejectRequest(request.id)}>Reject</button>
+            <a id='friendbutton' onClick={() => handleAcceptRequest(request.id, request.from)}>Accept</a>
+            <a id='friendbutton' onClick={() => handleRejectRequest(request.id)}>Reject</a>
           </div>
         ))}
       </div>
-      <h2>Your Friends</h2>
+      <h4>Your Friends</h4>
       <div className="friends-list">
         {friendUsers.length > 0 ? (
           friendUsers.map(friend => (
-            <div key={friend.id} className="friend-item" onClick={() => handleFriendClick(friend.id)}>
+            <div key={friend.id} className="friend-box" onClick={() => handleFriendClick(friend.id)}>
               <span>{friend.firstName || friend.name || 'Unnamed'}</span>
             </div>
           ))
@@ -253,8 +255,11 @@ const Friends = () => {
         
         
       </div>
-      <AfterLoginFooter />
+      
 
+    </div>
+    <div><AfterLoginFooter /></div>
+    
     </div>
   );
 };
